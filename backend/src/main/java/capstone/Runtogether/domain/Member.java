@@ -7,9 +7,9 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
-    private String name;
     private String pw;
-    private char gender;
+    private String name;
+    private Character gender;
 
     public Long getId() {
         return id;
@@ -27,14 +27,6 @@ public class Member {
         this.email = email;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getPw() {
         return pw;
     }
@@ -43,11 +35,19 @@ public class Member {
         this.pw = pw;
     }
 
-    public char getGender() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Character getGender() {
         return gender;
     }
 
-    public void setGender(char gender) {
+    public void setGender(Character gender) {
         this.gender = gender;
     }
 }
