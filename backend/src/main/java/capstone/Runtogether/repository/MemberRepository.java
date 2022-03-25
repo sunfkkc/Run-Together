@@ -8,11 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, String> {
     Member save (Member member);
-    Optional<Member> findById(Long id);
+    Optional<Member> findById(String email);
     Optional<Member> findByName(String name);
-    Optional<Member> findByEmail(String email);
     List<Member> findAll();
 
 }

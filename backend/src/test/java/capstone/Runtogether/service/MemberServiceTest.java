@@ -1,12 +1,14 @@
 package capstone.Runtogether.service;
 
 import capstone.Runtogether.domain.Member;
-import capstone.Runtogether.dto.MemberDTO;
+import capstone.Runtogether.dto.MemberDto;
 import capstone.Runtogether.repository.MemberRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,15 +25,15 @@ class MemberServiceIntegrationTest {
     @Test
     void 회원가입() {
         //given
-        MemberDTO memberDTO =MemberDTO.builder()
+        MemberDto memberDTO = MemberDto.builder()
                 .name("연잔")
                 .email("abcd@naver.com")
-                .pw("1234")
+                .pwd("1234")
                 .gender('F')
                 .build();
 
         //when
-        Long saveId = memberService.join(memberDTO).getId();
+        String saveId = memberService.join(memberDTO);
 
         //then
         Member findMember = memberService.findOne(saveId).get();
@@ -41,47 +43,47 @@ class MemberServiceIntegrationTest {
     @Test
     public void 중복_닉네임_예외(){
         //given
-        MemberDTO memberDTO1 = MemberDTO.builder()
+        MemberDto memberDto1 = MemberDto.builder()
                 .name("spring")
                 .email("a@naver.com")
-                .pw(passwordEncoder.encode("1234"))
+                .pwd(passwordEncoder.encode("1234"))
                 .gender('F')
                 .build();
 
-        MemberDTO memberDTO2 = MemberDTO.builder()
+        MemberDto memberDto2 = MemberDto.builder()
                 .name("spring")
                 .email("abc@naver.com")
-                .pw(passwordEncoder.encode("1234"))
+                .pwd(passwordEncoder.encode("1234"))
                 .gender('F')
                 .build();
         //when
-        memberService.join(memberDTO1);
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(memberDTO2));
+        memberService.join(memberDto1);
 
         //then
+        Assertions.assertThat(memberService.join(memberDto1)).isEqualTo("existName");
     }
     @Test
     public void 중복_회원_예외(){
         //given
-        MemberDTO memberDTO1 = MemberDTO.builder()
+        MemberDto memberDto1 = MemberDto.builder()
                 .name("spring")
                 .email("a@naver.com")
-                .pw(passwordEncoder.encode("1234"))
+                .pwd(passwordEncoder.encode("1234"))
                 .gender('F')
                 .build();
 
-        MemberDTO memberDTO2 = MemberDTO.builder()
+        MemberDto memberDto2 = MemberDto.builder()
                 .name("boot")
                 .email("a@naver.com")
-                .pw(passwordEncoder.encode("1234"))
+                .pwd(passwordEncoder.encode("1234"))
                 .gender('F')
                 .build();
 
         //when
-        memberService.join(memberDTO1);
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(memberDTO2));
+        memberService.join(memberDto1);
 
-        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+        //then
+        Assertions.assertThat(memberService.join(memberDto1)).isEqualTo("existEmail");
 
     }
 }

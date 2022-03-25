@@ -3,6 +3,7 @@ package capstone.Runtogether.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +25,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         // resources 모든 접근을 허용하는 설정을 해버리면
@@ -40,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated();
     }
+
 
 
 }
