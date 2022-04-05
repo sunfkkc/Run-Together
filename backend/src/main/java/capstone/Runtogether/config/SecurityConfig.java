@@ -1,5 +1,10 @@
 package capstone.Runtogether.config;
 
+import capstone.Runtogether.config.filter.JwtAuthenticationFilter;
+import capstone.Runtogether.config.handler.CustomAccessDeniedHandler;
+import capstone.Runtogether.config.handler.CustomEntryPoint;
+import capstone.Runtogether.util.JwtTokenProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +13,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -17,6 +29,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 
+    private JwtTokenProvider jwtTokenProvider;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomEntryPoint customEntryPoint;
+    private final ObjectMapper objectMapper;
 
     // 암호화를 위해
     @Bean
@@ -42,12 +58,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     public void configure(HttpSecurity http) throws Exception{
         http
+                .cors()
+                .and()
                 .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
-                    .antMatchers("/api/**").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/admin/**").access("hasAnyRole('ADMIN')")
+                .antMatchers("/member/**").access("hasRole('ADMIN','MEMBER')")
+                .anyRequest().permitAll()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(customEntryPoint).accessDeniedHandler(customAccessDeniedHandler)
+                .and()
+                .httpBasic().disable()
+                .formLogin().disable()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                //.addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",configuration);
+        return source;
+    }
 
 
 }

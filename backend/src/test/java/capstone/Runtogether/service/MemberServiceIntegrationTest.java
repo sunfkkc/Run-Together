@@ -1,6 +1,8 @@
 package capstone.Runtogether.service;
 
 import capstone.Runtogether.domain.Member;
+import capstone.Runtogether.domain.Role;
+import capstone.Runtogether.dto.LoginFormDto;
 import capstone.Runtogether.dto.MemberDto;
 import capstone.Runtogether.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
@@ -8,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,65 +29,66 @@ class MemberServiceIntegrationTest {
     @Test
     void 회원가입() {
         //given
-        MemberDto memberDTO = MemberDto.builder()
-                .name("연잔")
+        MemberDto memberDto = MemberDto.builder()
                 .email("abcd@naver.com")
+                .name("연잔")
                 .pwd("1234")
                 .gender('F')
                 .build();
 
         //when
-        String saveId = memberService.join(memberDTO);
+        String saveMemberEmail = memberService.join(memberDto);
 
         //then
-        Member findMember = memberService.findOne(saveId).get();
-        assertThat(memberDTO.getName()).isEqualTo(findMember.getName());
+        Optional<Member> findMember = memberService.findByEmail(saveMemberEmail);
+        assertThat(findMember.get().getName()).isEqualTo(memberDto.getName());
     }
 
     @Test
     public void 중복_닉네임_예외(){
         //given
         MemberDto memberDto1 = MemberDto.builder()
-                .name("spring")
                 .email("a@naver.com")
-                .pwd(passwordEncoder.encode("1234"))
+                .name("spring")
+                .pwd("1234")
                 .gender('F')
                 .build();
 
         MemberDto memberDto2 = MemberDto.builder()
+                .email("b@naver.com")
                 .name("spring")
-                .email("abc@naver.com")
-                .pwd(passwordEncoder.encode("1234"))
-                .gender('F')
+                .pwd("5678")
+                .gender('M')
                 .build();
         //when
         memberService.join(memberDto1);
 
         //then
-        Assertions.assertThat(memberService.join(memberDto1)).isEqualTo("existName");
+        assertThat(memberService.join(memberDto2)).isEqualTo("existName");
     }
     @Test
-    public void 중복_회원_예외(){
+    public void 중복_계정_예외(){
         //given
         MemberDto memberDto1 = MemberDto.builder()
-                .name("spring")
                 .email("a@naver.com")
-                .pwd(passwordEncoder.encode("1234"))
+                .name("spring")
+                .pwd("1234")
                 .gender('F')
                 .build();
 
         MemberDto memberDto2 = MemberDto.builder()
-                .name("boot")
                 .email("a@naver.com")
-                .pwd(passwordEncoder.encode("1234"))
-                .gender('F')
+                .name("summer")
+                .pwd("5678")
+                .gender('M')
                 .build();
 
         //when
         memberService.join(memberDto1);
 
         //then
-        Assertions.assertThat(memberService.join(memberDto1)).isEqualTo("existEmail");
+        assertThat(memberService.join(memberDto2)).isEqualTo("existEmail");
 
     }
+
 }
