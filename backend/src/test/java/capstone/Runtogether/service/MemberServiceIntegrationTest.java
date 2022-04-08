@@ -45,7 +45,7 @@ class MemberServiceIntegrationTest {
     }
 
     @Test
-    public void 중복_닉네임_예외(){
+    void 중복_닉네임_예외(){
         //given
         MemberDto memberDto1 = MemberDto.builder()
                 .email("a@naver.com")
@@ -67,7 +67,7 @@ class MemberServiceIntegrationTest {
         assertThat(memberService.join(memberDto2)).isEqualTo("existName");
     }
     @Test
-    public void 중복_계정_예외(){
+    void 중복_계정_예외(){
         //given
         MemberDto memberDto1 = MemberDto.builder()
                 .email("a@naver.com")
@@ -88,6 +88,10 @@ class MemberServiceIntegrationTest {
 
         //then
         assertThat(memberService.join(memberDto2)).isEqualTo("existEmail");
+
+    }
+    @Test
+    void 로그인(){
 
     }
 

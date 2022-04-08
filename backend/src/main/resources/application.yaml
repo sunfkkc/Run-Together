@@ -4,6 +4,9 @@ spring :
     username: sa
     password:
     driver-class-name : org.h2.Driver #디비 종류
+  redis:
+    host: localhost
+    port: 6379
 
   jpa: #jpa 종류
     hibernate:

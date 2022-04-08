@@ -29,7 +29,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
         Map<String, String> map = new HashMap<>();
-        map.put("errortype", "Forbidden");
+        map.put("error-type", "Forbidden");
         map.put("code", "403");
         map.put("message", "허용하지 않는 권한에 접근하였습니다");
 
