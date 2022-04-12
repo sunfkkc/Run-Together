@@ -23,7 +23,6 @@ public class Member implements UserDetails {
     private String name;
     private Character gender;
     private Role role;
-    private String refreshToken;
 
     public Member(MemberDto memberDto){
         this.email = memberDto.getEmail();
@@ -32,7 +31,6 @@ public class Member implements UserDetails {
         this.name = memberDto.getName();
         this.gender = memberDto.getGender();
         this.role = Role.MEMBER;
-        this.refreshToken = memberDto.getRefreshToken();
 
     }
 

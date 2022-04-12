@@ -1,24 +1,21 @@
 package capstone.Runtogether.util;
 
 import capstone.Runtogether.domain.Member;
-import capstone.Runtogether.service.MemberService;
+import capstone.Runtogether.service.UserDetailServiceImpl;
 import io.jsonwebtoken.*;
 
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -27,15 +24,18 @@ public class JwtTokenProvider {
     SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256); //or HS384 or HS512
     //String secretString = Encoders.BASE64.encode(key.getEncoded());
 
-    private final MemberService memberService;
+    private final UserDetailServiceImpl userDetailService;
+    private final RedisTemplate redisTemplate;
 
     // 토큰 유효시간
+    //private final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 30 ; // 30초간 토큰 유효
     private final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 30; // 30분간 토큰 유효
     private final Long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 14; //2주간 토큰 유효
 
     @Autowired
-    public JwtTokenProvider(MemberService memberService) {
-        this.memberService = memberService;
+    public JwtTokenProvider(RedisTemplate<String, String> redisTemplate, UserDetailServiceImpl userDetailService, RedisTemplate redisTemplate1) {
+        this.userDetailService = userDetailService;
+        this.redisTemplate = redisTemplate1;
     }
 
     //Member 통해 RefreshToken 생성 및 반환
@@ -60,7 +60,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setHeaderParam("typ", "ACCESS_TOKEN")
                 .setHeaderParam("alg", "HS256")
-                .setSubject(member.getMemberId().toString())
+                .setSubject(member.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
                 .claim("role", member.getRole().toString())
@@ -68,16 +68,16 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Jwt 토큰에서 memberId 추출
-    public Long getMemberIdFromJwt(String token){
+    // Jwt 토큰에서 email 추출
+    public String getEmailFromJwt(String token){
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        Long memberId = Long.valueOf(claims.getSubject());
+        String email = String.valueOf(claims.getSubject());
 
-        return memberId;
+        return email;
 
     }
 
@@ -88,6 +88,9 @@ public class JwtTokenProvider {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+            if(redisTemplate.hasKey(token)){
+                return false;
+            }
             return true;
         }catch (SignatureException ex) {
             log.error("Invalid JWT signature");
@@ -110,19 +113,22 @@ public class JwtTokenProvider {
     // Jwt Token에 담긴 유저 정보를 DB에 검색
     // 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 반환
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = memberService.loadUserByUsername(String.valueOf(getMemberIdFromJwt(token)));
+        UserDetails userDetails = userDetailService.loadUserByUsername(String.valueOf(getEmailFromJwt(token)));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 
     }
 
+    public Long getAccessTokenExpirationTime(){
+        return ACCESS_TOKEN_EXPIRE_TIME;
+    }
 
-/*
+
+    /*
     // Request의 Header에서 token 값 추출
     public String resolveToken(HttpServletRequest request){
         return request.getHeader("AUTH");
     }
-
-*/
+    */
 
 
 

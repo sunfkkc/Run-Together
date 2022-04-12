@@ -3,11 +3,11 @@ package capstone.Runtogether.service;
 import capstone.Runtogether.domain.Member;
 import capstone.Runtogether.dto.MemberDto;
 import capstone.Runtogether.repository.MemberRepository;
+import capstone.Runtogether.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class MemberService implements UserDetailsService {
+public class MemberService {
 
 
 
@@ -25,7 +25,7 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -51,6 +51,21 @@ public class MemberService implements UserDetailsService {
         return member.getEmail();
     }
 
+
+    public ResponseEntity<?> checkEmail(String email){
+        if(memberRepository.findByEmail(email).isPresent()){
+            return new ResponseEntity<String>("해당 유저가 이미 존재합니다.", HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<String>("사용할 수 있는 이메일입니다.",HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> checkName(String name){
+        if(memberRepository.findByName(name).isPresent()){
+            return new ResponseEntity<String>("해당 닉네임은 이미 존재합니다.", HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<String>("사용할 수 있는 이름입니다.",HttpStatus.OK);
+    }
+
     private boolean existName(MemberDto member){
         return memberRepository.findByName(member.getName())
                 .isPresent();
@@ -61,18 +76,6 @@ public class MemberService implements UserDetailsService {
                 .isPresent();
     }
 
-
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member findMember =memberRepository.findByEmail(email)
-                .orElseThrow(()-> new UsernameNotFoundException("등록되지 않은 사용자 입니다"));
-
-        if (findMember != null){
-            return findMember;
-        }
-        return null;
-    }
     public Optional<Member> findOne(String memberEmail){
         return memberRepository.findById(memberEmail);
     }

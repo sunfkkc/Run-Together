@@ -19,5 +19,4 @@ public class MemberDto{
     private String name;
     private Character gender;
     private Role role;
-    private String refreshToken;
 }

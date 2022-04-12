@@ -29,10 +29,9 @@ import java.util.Arrays;
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomEntryPoint customEntryPoint;
-    private final ObjectMapper objectMapper;
 
     // 암호화를 위해
     @Bean
@@ -79,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
