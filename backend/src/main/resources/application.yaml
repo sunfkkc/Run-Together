@@ -1,9 +1,14 @@
 spring :
-  datasource: #연결할 디비의 이름
-    url: jdbc:h2:tcp://localhost/~/test
-    username: sa
-    password:
-    driver-class-name : org.h2.Driver #디비 종류
+  datasource:
+    #연결할 디비의 이름
+    #url: jdbc:h2:tcp://localhost/~/test
+    url: jdbc:mysql://localhost:3306/runtogether?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: "0711"
+    #디비 종류
+    #driver-class-name : org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   redis:
     host: localhost
     port: 6379
@@ -13,7 +18,7 @@ spring :
       ddl-auto: create #app 로딩 시점에 테이블 다 드랍하고 새로시작, 끝나도 그대로 남아있음
     properties:
       hibernate:
-        #show_sql : true #콘솔에 로그가 나옴
+        show_sql : true #콘솔에 로그가 나옴
         format_sql: true #이쁘게 해줌
 
 logging.level:
