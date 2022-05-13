@@ -50,6 +50,13 @@ public class BoardController {
         }
     }
 
+    @GetMapping("{boardId}")
+    //게시글 읽기
+    public ResponseEntity<Response<Object>> read(@PathVariable long boardId){
+        Board article = boardService.getArticle(boardId);
+        return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시글 불러오기 성공",article), HttpStatus.OK);
+    }
+
 
 /*    @PostMapping("/image")
     public ResponseEntity<Response<Object>> imageUpload(@RequestParam("file")MultipartFile multipartFile) throws IOException {

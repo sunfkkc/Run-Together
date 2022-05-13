@@ -2,12 +2,8 @@ package capstone.Runtogether.service;
 
 import capstone.Runtogether.dto.BoardDto;
 import capstone.Runtogether.entity.Board;
-import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +30,20 @@ public class BoardService {
     //목록 조회
     public List<Board> list() {
         return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "board_id"));
+    }
+
+    //게시글 읽기
+    public Board getArticle(Long boardId){
+        try {
+            if(boardRepository.findById(boardId).isPresent()){
+                Board article = boardRepository.findById(boardId).get();
+                article.setViews(article.getViews()+1);
+                return article;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
