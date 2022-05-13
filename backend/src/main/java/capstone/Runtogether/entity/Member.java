@@ -1,4 +1,4 @@
-package capstone.Runtogether.domain;
+package capstone.Runtogether.entity;
 
 import capstone.Runtogether.dto.MemberDto;
 import lombok.*;
@@ -17,6 +17,7 @@ import java.util.Collection;
 public class Member implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long memberId;
     private String email;
     private String pwd;

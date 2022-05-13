@@ -1,11 +1,9 @@
 package capstone.Runtogether.service;
 
-import capstone.Runtogether.domain.Member;
+import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.dto.MemberDto;
 import capstone.Runtogether.repository.MemberRepository;
-import capstone.Runtogether.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +16,6 @@ import java.util.Optional;
 @Service
 @Transactional
 public class MemberService {
-
 
 
     private final MemberRepository memberRepository;

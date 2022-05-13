@@ -1,6 +1,6 @@
 package capstone.Runtogether.util;
 
-import capstone.Runtogether.domain.Member;
+import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.service.UserDetailServiceImpl;
 import io.jsonwebtoken.*;
 

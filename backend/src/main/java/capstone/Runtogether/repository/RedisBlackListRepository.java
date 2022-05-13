@@ -1,14 +1,16 @@
 package capstone.Runtogether.repository;
 
 import capstone.Runtogether.util.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
-@Repository
+@Service
 public class RedisBlackListRepository {
 
+    @Autowired
     private final RedisTemplate redisTemplate;
     private final JwtTokenProvider jwtTokenProvider;
 

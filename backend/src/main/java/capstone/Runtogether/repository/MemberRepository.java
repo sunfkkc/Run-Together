@@ -1,6 +1,6 @@
 package capstone.Runtogether.repository;
 
-import capstone.Runtogether.domain.Member;
+import capstone.Runtogether.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

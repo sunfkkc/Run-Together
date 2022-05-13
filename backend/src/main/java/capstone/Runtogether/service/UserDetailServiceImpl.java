@@ -1,6 +1,6 @@
 package capstone.Runtogether.service;
 
-import capstone.Runtogether.domain.Member;
+import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
