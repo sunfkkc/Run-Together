@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequestMapping("/challenge")
 public class ChallengeController {
-    private final ChallengeDto challengeDto;
 
     @PostMapping("/write")
     public ResponseEntity<Response<Object>> write(@RequestParam ChallengeDto challengeDto){

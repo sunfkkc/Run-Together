@@ -3,6 +3,8 @@ package capstone.Runtogether.controller;
 import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.dto.LoginFormDto;
 import capstone.Runtogether.dto.MemberDto;
+import capstone.Runtogether.model.Response;
+import capstone.Runtogether.model.StatusCode;
 import capstone.Runtogether.service.MemberService;
 import capstone.Runtogether.service.UserDetailServiceImpl;
 import capstone.Runtogether.util.JwtTokenProvider;
@@ -23,35 +25,33 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class MemberController extends ApiBaseController{
+public class MemberController extends ApiBaseController {
 
     private final UserDetailServiceImpl userDetailService;
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private Object status;
 
 
-
     @PostMapping("join")
-    public ResponseEntity<String> join(@RequestBody MemberDto memberDto){
+    public ResponseEntity<String> join(@RequestBody MemberDto memberDto) {
         String result = memberService.join(memberDto);
-        if (result == "existEmail"){
-            return new ResponseEntity<String>("이미 존재하는 계정입니다.", HttpStatus.OK);
+        if (result.equals("existEmail")) {
+            return new ResponseEntity<>("이미 존재하는 계정입니다.", HttpStatus.OK);
+        } else if (result.equals("existName")) {
+            return new ResponseEntity<>("이미 존재하는 이름입니다.", HttpStatus.OK);
         }
-        else if ( result == "existName"){
-            return new ResponseEntity<String>("이미 존재하는 이름입니다.", HttpStatus.OK);
-        }
-        return new ResponseEntity<String>("회원가입에 성공", HttpStatus.CREATED);
+        return new ResponseEntity<>("회원가입에 성공", HttpStatus.CREATED);
     }
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody LoginFormDto form, HttpServletResponse response) {
         Member loginMember = userDetailService.loadUserByUsername(form.getEmail());
 
-        if(!passwordEncoder.matches(form.getPwd(), loginMember.getPassword())) {
-            return new ResponseEntity<String>("비밀번호가 올바르지 않습니다",HttpStatus.FORBIDDEN);
+        if (!passwordEncoder.matches(form.getPwd(), loginMember.getPassword())) {
+            return new ResponseEntity<>("비밀번호가 올바르지 않습니다", HttpStatus.FORBIDDEN);
         }
 
         String accessToken = jwtTokenProvider.generateAccessToken(loginMember);
@@ -62,47 +62,45 @@ public class MemberController extends ApiBaseController{
 
         response.addCookie(tokenCookie);
 
-        return new ResponseEntity<>("로그인 성공",HttpStatus.OK);
+        return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
     }
 
     @GetMapping("checkEmail")
-    public ResponseEntity<?> checkEmail(@RequestParam("email") String email){
+    public ResponseEntity<?> checkEmail(@RequestParam("email") String email) {
         return memberService.checkEmail(email);
     }
 
     @GetMapping("checkName")
-    public ResponseEntity<?> checkName(@RequestParam("name") String name){
+    public ResponseEntity<?> checkName(@RequestParam("name") String name) {
         return memberService.checkName(name);
     }
 
     @GetMapping("")
-    public ResponseEntity<?> afterLogin(HttpServletRequest request){
+    public ResponseEntity<?> afterLogin(HttpServletRequest request) {
         String accessToken = request.getHeader("auth");
-        if(jwtTokenProvider.validateToken(accessToken)){
+        if (jwtTokenProvider.validateToken(accessToken)) {
             String email = jwtTokenProvider.getEmailFromJwt(accessToken);
-            return new ResponseEntity<>(email,HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<String>("검증실패",HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(email, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("검증실패", HttpStatus.FORBIDDEN);
         }
     }
 
     @PostMapping("logout")
-    public ResponseEntity<?> logout(HttpServletRequest request){
-
-        String accessToken = request.getHeader("auth");
+    public ResponseEntity<Response<Object>> logout(@CookieValue("auth") String accessToken) {
 
         if (!jwtTokenProvider.validateToken(accessToken)) {
-            return new ResponseEntity<String>("token 검증 실패",HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new Response<>(StatusCode.FORBIDDEN,"토큰검증 실패",accessToken),HttpStatus.FORBIDDEN);
+
         }
 
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
         redisTemplate.opsForValue()
-                .set(accessToken,"access-token",
+                .set(accessToken, "access-token",
                         jwtTokenProvider.getAccessTokenExpirationTime(), TimeUnit.MILLISECONDS);
 
-        return new ResponseEntity<String>("로그아웃 완료",HttpStatus.OK);
+        return new ResponseEntity<>(new Response<>(StatusCode.OK,"로그아웃 완료"),HttpStatus.OK);
     }
 
        /* @PostMapping("reissue")

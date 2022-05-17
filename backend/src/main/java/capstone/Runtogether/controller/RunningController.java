@@ -40,9 +40,7 @@ public class RunningController {
     }
 
     @GetMapping("/temp")
-    public ResponseEntity<Response<Object>> getTempRecord(HttpServletRequest request) {
-        String accessToken = request.getHeader("auth");
-
+    public ResponseEntity<Response<Object>> getTempRecord(@CookieValue("auth") String accessToken) {
         if (jwtTokenProvider.validateToken(accessToken)) {
             Member loginMember = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -55,8 +53,7 @@ public class RunningController {
     }
 
     @PostMapping
-    public ResponseEntity<Response<Object>> saveRecord(@RequestBody Map<String, Object> runningInfo, HttpServletRequest request){
-        String accessToken = request.getHeader("auth");
+    public ResponseEntity<Response<Object>> saveRecord(@RequestBody Map<String, Object> runningInfo, @CookieValue("auth") String accessToken){
         if(jwtTokenProvider.validateToken(accessToken)){
             Member loginMember = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

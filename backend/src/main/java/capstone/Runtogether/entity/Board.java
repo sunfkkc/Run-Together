@@ -31,7 +31,6 @@ public class Board {
     private String ImageFileName;
 
     public Board(BoardDto boardDto) {
-        this.boardId = boardDto.getBoardId();
         this.title = boardDto.getTitle();
         this.contents = boardDto.getContents();
         this.registerDate = boardDto.getRegisterDate();

@@ -21,7 +21,7 @@ public class Running implements Serializable {
     @Column(name = "running_id")
     private Long runningId;
 
-    @Column(name = "member_id", nullable = true)
+    @Column(name = "member_id")
     private Long memberId;
 
     @Column(name = "polyline", columnDefinition = "LONGTEXT")
@@ -36,7 +36,7 @@ public class Running implements Serializable {
     @Column(name = "accumulated_distance", nullable = false)
     private double accDistance;
 
-    @Column(name = "accumulated_distance", nullable = false)
+    @Column(name = "accumulated_time", nullable = false)
     private Long accTime;
 
     @Column(name = "thumbnail", length = 300)
