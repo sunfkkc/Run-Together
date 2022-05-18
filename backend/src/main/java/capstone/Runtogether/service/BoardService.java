@@ -40,7 +40,7 @@ public class BoardService {
 
     //목록 조회
     public List<Board> list() {
-        return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "board_id"));
+        return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "boardId"));
     }
 
     //게시글 읽기

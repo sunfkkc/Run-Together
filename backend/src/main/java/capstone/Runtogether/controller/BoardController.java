@@ -45,7 +45,7 @@ public class BoardController {
         }
     }
 
-    @GetMapping("{boardId}")
+    @GetMapping("/{boardId}")
     //게시글 읽기
     public ResponseEntity<Response<Object>> read(@PathVariable long boardId) {
         Board article = boardService.getArticle(boardId);
