@@ -36,17 +36,11 @@ public class BoardController {
 
     //게시글 작성
     @PostMapping("/write")
-    public ResponseEntity<Response<Object>> write(@RequestPart("boardDto") BoardDto boardDto, @RequestPart(value = "file",required = false) MultipartFile file, HttpServletRequest request) {
+    public ResponseEntity<Response<Object>> write(@RequestPart("boardDto") BoardDto boardDto, @RequestPart(value = "file", required = false) MultipartFile file, HttpServletRequest request) {
         boardDto.setImageFileName(boardService.saveImageInServer(file));
         boardService.write(boardDto);
         return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시물 추가 성공"), HttpStatus.OK);
-        /*        if (jwtTokenProvider.validateToken(accessToken)) {
-            boardDto.setImageFileName(boardService.saveImageInServer(file));
-            boardService.write(boardDto);
-            return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시물 추가 성공"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new Response<>(StatusCode.FORBIDDEN, ResponseMessage.UNAUTHORIZED), HttpStatus.FORBIDDEN);
-        }*/
+
     }
 
     @GetMapping("/{boardId}")
@@ -54,6 +48,19 @@ public class BoardController {
     public ResponseEntity<Response<Object>> read(@PathVariable long boardId) {
         Board article = boardService.getArticle(boardId);
         return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시글 불러오기 성공", article), HttpStatus.OK);
+    }
+
+    @PostMapping("/admin/approve/{boardId}")
+    public ResponseEntity<Response<Object>> approve(@PathVariable long boardId, @RequestParam("state") String state) {
+        Long challengeId = boardService.moveToChallenge(boardId, state);
+        if (challengeId != null) {
+            return new ResponseEntity<>(new Response<>(StatusCode.CREATED, "승인 완료"), HttpStatus.CREATED);
+
+        }else {
+            return new ResponseEntity<>(new Response<>(StatusCode.INTERNAL_SERVER_ERROR, "승인 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
     }
 
 }

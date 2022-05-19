@@ -37,8 +37,17 @@ public class Challenge {
         this.title = challengeDto.getTitle();
         this.contents = challengeDto.getContents();
         this.registerDate = new Date();
-        this.views = challengeDto.getViews();
+        this.views = 0;
         this.ImageFileName = challengeDto.getImageFileName();
         this.state = challengeDto.getState();
+    }
+
+    public Challenge(Board board) {
+        this.title = board.getTitle();
+        this.contents = board.getContents();
+        this.registerDate = new Date();
+        this.views = 0;
+        this.ImageFileName = board.getImageFileName();
+        this.state = null;
     }
 }

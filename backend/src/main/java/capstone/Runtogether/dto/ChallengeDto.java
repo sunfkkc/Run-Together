@@ -1,5 +1,6 @@
 package capstone.Runtogether.dto;
 
+import capstone.Runtogether.entity.Board;
 import lombok.*;
 
 import java.util.Date;
@@ -14,8 +15,6 @@ public class ChallengeDto {
     private String title;
 
     private String contents;
-
-    private int views;
 
     private String ImageFileName;
 

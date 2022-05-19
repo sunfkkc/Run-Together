@@ -2,17 +2,13 @@ package capstone.Runtogether.service;
 
 import capstone.Runtogether.dto.BoardDto;
 import capstone.Runtogether.entity.Board;
-import capstone.Runtogether.model.Response;
-import capstone.Runtogether.model.StatusCode;
+import capstone.Runtogether.entity.Challenge;
 import capstone.Runtogether.repository.BoardRepository;
+import capstone.Runtogether.repository.ChallengeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -26,10 +22,12 @@ import java.util.UUID;
 @Transactional
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final ChallengeRepository challengeRepository;
 
     @Autowired
-    public BoardService(BoardRepository boardRepository) {
+    public BoardService(BoardRepository boardRepository, ChallengeRepository challengeRepository) {
         this.boardRepository = boardRepository;
+        this.challengeRepository = challengeRepository;
     }
 
     //목록 조회
@@ -45,11 +43,11 @@ public class BoardService {
 
 
     //게시글 읽기
-    public Board getArticle(Long boardId){
+    public Board getArticle(Long boardId) {
         try {
-            if(boardRepository.findById(boardId).isPresent()){
+            if (boardRepository.findById(boardId).isPresent()) {
                 Board article = boardRepository.findById(boardId).get();
-                article.setViews(article.getViews()+1);
+                article.setViews(article.getViews() + 1);
                 return article;
             }
         } catch (Exception e) {
@@ -59,7 +57,7 @@ public class BoardService {
     }
 
     //파일 이름 저장
-    public String saveImageInServer(MultipartFile multipartFile){
+    public String saveImageInServer(MultipartFile multipartFile) {
         //UUID 설정
         String fileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
@@ -74,6 +72,22 @@ public class BoardService {
         }
         return saveFileName;
 
+    }
+
+    //챌린지로 이동
+    public Long moveToChallenge(Long boardId, String state) {
+        try {
+            if (boardRepository.findById(boardId).isPresent()) {
+                Board board = boardRepository.findById(boardId).get();
+                Challenge challenge = new Challenge(board);
+                challenge.setState(state);
+                return challengeRepository.save(challenge).getChallengeId();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
 

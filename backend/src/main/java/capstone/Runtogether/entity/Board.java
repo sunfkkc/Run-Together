@@ -34,7 +34,7 @@ public class Board {
         this.title = boardDto.getTitle();
         this.contents = boardDto.getContents();
         this.registerDate = new Date();
-        this.views = boardDto.getViews();
+        this.views = 0;
         this.ImageFileName = boardDto.getImageFileName();
     }
 
