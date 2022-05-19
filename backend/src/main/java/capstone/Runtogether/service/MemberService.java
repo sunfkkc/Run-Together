@@ -2,6 +2,7 @@ package capstone.Runtogether.service;
 
 import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.dto.MemberDto;
+import capstone.Runtogether.entity.Role;
 import capstone.Runtogether.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,56 +28,60 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<Member> findMembers(){
+    public List<Member> findMembers() {
         return memberRepository.findAll();
 
     }
 
-    public Optional<Member> findByEmail(String email){
+    public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
-     /**회원가입*/
-    public String join(MemberDto memberDto){
+
+    /**
+     * 회원가입
+     */
+    public String join(MemberDto memberDto) {
 
         if (existEmail(memberDto)) return "existEmail"; //계정 중복 검증
 
-        if(existName(memberDto)) return "existName"; // 닉네임 중복 검증
+        if (existName(memberDto)) return "existName"; // 닉네임 중복 검증
 
         memberDto.setPwd(passwordEncoder.encode(memberDto.getPwd()));
         Member member = new Member(memberDto);
+        if (member.getName().equals("관리자")) member.setRole(Role.ROLE_ADMIN);
+
         memberRepository.save(member);
         return member.getEmail();
     }
 
 
-    public ResponseEntity<?> checkEmail(String email){
-        if(memberRepository.findByEmail(email).isPresent()){
+    public ResponseEntity<?> checkEmail(String email) {
+        if (memberRepository.findByEmail(email).isPresent()) {
             return new ResponseEntity<String>("해당 유저가 이미 존재합니다.", HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<String>("사용할 수 있는 이메일입니다.",HttpStatus.OK);
+        return new ResponseEntity<String>("사용할 수 있는 이메일입니다.", HttpStatus.OK);
     }
 
-    public ResponseEntity<?> checkName(String name){
-        if(memberRepository.findByName(name).isPresent()){
+    public ResponseEntity<?> checkName(String name) {
+        if (memberRepository.findByName(name).isPresent()) {
             return new ResponseEntity<String>("해당 닉네임은 이미 존재합니다.", HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<String>("사용할 수 있는 이름입니다.",HttpStatus.OK);
+        return new ResponseEntity<String>("사용할 수 있는 이름입니다.", HttpStatus.OK);
     }
 
-    private boolean existName(MemberDto member){
+    private boolean existName(MemberDto member) {
         return memberRepository.findByName(member.getName())
                 .isPresent();
     }
 
-    private boolean existEmail(MemberDto member){
+    private boolean existEmail(MemberDto member) {
         return memberRepository.findByEmail(member.getEmail())
                 .isPresent();
     }
 
-    public Optional<Member> findOne(String memberEmail){
+    public Optional<Member> findOne(String memberEmail) {
         return memberRepository.findById(memberEmail);
     }
-
 
 
 }

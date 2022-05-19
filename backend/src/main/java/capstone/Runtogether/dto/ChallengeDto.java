@@ -11,17 +11,14 @@ import java.util.Date;
 @Builder
 public class ChallengeDto {
 
-    private Long challengeId;
-
     private String title;
 
     private String contents;
-
-    private Date registerDate;
 
     private int views;
 
     private String ImageFileName;
 
-    private Boolean approved;
+    private String state;
+
 }

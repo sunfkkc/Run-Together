@@ -29,8 +29,8 @@ public class JwtTokenProvider {
 
     // 토큰 유효시간
     //private final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 30 ; // 30초간 토큰 유효
-    private final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 30; // 30분간 토큰 유효
-    private final Long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 14; //2주간 토큰 유효
+    public final static Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60; // 60분간 토큰 유효
+    public final static Long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 14; //2주간 토큰 유효
 
     @Autowired
     public JwtTokenProvider(RedisTemplate<String, String> redisTemplate, UserDetailServiceImpl userDetailService, RedisTemplate redisTemplate1) {
@@ -109,11 +109,10 @@ public class JwtTokenProvider {
     }
 
 
-
     // Jwt Token에 담긴 유저 정보를 DB에 검색
     // 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 반환
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailService.loadUserByUsername(String.valueOf(getEmailFromJwt(token)));
+        Member userDetails = userDetailService.loadUserByUsername(String.valueOf(getEmailFromJwt(token)));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 
     }
@@ -121,17 +120,6 @@ public class JwtTokenProvider {
     public Long getAccessTokenExpirationTime(){
         return ACCESS_TOKEN_EXPIRE_TIME;
     }
-
-
-    /*
-    // Request의 Header에서 token 값 추출
-    public String resolveToken(HttpServletRequest request){
-        return request.getHeader("AUTH");
-    }
-    */
-
-
-
 
 
 }

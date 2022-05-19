@@ -1,6 +1,7 @@
 package capstone.Runtogether.config.filter;
 
 
+import capstone.Runtogether.util.CookieUtil;
 import capstone.Runtogether.util.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,10 +25,12 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends GenericFilterBean{
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtil cookieUtil;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, CookieUtil cookieUtil) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.cookieUtil = cookieUtil;
     }
 
 
@@ -45,9 +49,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean{
         chain.doFilter(httpRequest, httpResponse);
     }
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("auth");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
+        Cookie cookie = cookieUtil.getCookie(request,"auth");
+        if (cookie!=null) {
+            String bearerToken = cookie.getValue();
+            return bearerToken;
         }
         return null;
     }

@@ -7,6 +7,7 @@ import capstone.Runtogether.model.Response;
 import capstone.Runtogether.model.StatusCode;
 import capstone.Runtogether.service.MemberService;
 import capstone.Runtogether.service.UserDetailServiceImpl;
+import capstone.Runtogether.util.CookieUtil;
 import capstone.Runtogether.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class MemberController extends ApiBaseController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
+    private final CookieUtil cookieUtil;
     private Object status;
 
 
@@ -53,12 +55,10 @@ public class MemberController extends ApiBaseController {
         if (!passwordEncoder.matches(form.getPwd(), loginMember.getPassword())) {
             return new ResponseEntity<>("비밀번호가 올바르지 않습니다", HttpStatus.FORBIDDEN);
         }
-
+        //토큰 발급
         String accessToken = jwtTokenProvider.generateAccessToken(loginMember);
-
-        Cookie tokenCookie = new Cookie("auth", accessToken);
-        tokenCookie.setHttpOnly(true);
-        //tokenCookie.setSecure(true);
+        //쿠키에 토큰 넣기
+        Cookie tokenCookie = cookieUtil.createCookie("auth",accessToken);
 
         response.addCookie(tokenCookie);
 
@@ -77,28 +77,19 @@ public class MemberController extends ApiBaseController {
 
     @GetMapping("")
     public ResponseEntity<?> afterLogin(HttpServletRequest request) {
-        String accessToken = request.getHeader("auth");
-        if (jwtTokenProvider.validateToken(accessToken)) {
-            String email = jwtTokenProvider.getEmailFromJwt(accessToken);
-            return new ResponseEntity<>(email, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("검증실패", HttpStatus.FORBIDDEN);
-        }
+        Cookie auth = cookieUtil.getCookie(request, "auth");
+        String accessToken = auth.getValue();
+        String email = jwtTokenProvider.getEmailFromJwt(accessToken);
+        return new ResponseEntity<>(email, HttpStatus.OK);
+
     }
 
     @PostMapping("logout")
-    public ResponseEntity<Response<Object>> logout(@CookieValue("auth") String accessToken) {
-
-        if (!jwtTokenProvider.validateToken(accessToken)) {
-            return new ResponseEntity<>(new Response<>(StatusCode.FORBIDDEN,"토큰검증 실패",accessToken),HttpStatus.FORBIDDEN);
-
-        }
-
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
+    public ResponseEntity<Response<Object>> logout(HttpServletRequest request) {
+        Cookie logoutToken = cookieUtil.getCookie(request,"auth");
         redisTemplate.opsForValue()
-                .set(accessToken, "access-token",
-                        jwtTokenProvider.getAccessTokenExpirationTime(), TimeUnit.MILLISECONDS);
+                .set(logoutToken.getValue(), "access-token",
+                        60*60, TimeUnit.SECONDS);
 
         return new ResponseEntity<>(new Response<>(StatusCode.OK,"로그아웃 완료"),HttpStatus.OK);
     }

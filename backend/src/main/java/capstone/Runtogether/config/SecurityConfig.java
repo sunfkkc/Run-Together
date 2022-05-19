@@ -3,8 +3,8 @@ package capstone.Runtogether.config;
 import capstone.Runtogether.config.filter.JwtAuthenticationFilter;
 import capstone.Runtogether.config.handler.CustomAccessDeniedHandler;
 import capstone.Runtogether.config.handler.CustomEntryPoint;
+import capstone.Runtogether.util.CookieUtil;
 import capstone.Runtogether.util.JwtTokenProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtil cookieUtil;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomEntryPoint customEntryPoint;
 
@@ -63,16 +64,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/image").permitAll()
-                .antMatchers("/admin/**").access("hasAnyRole('ADMIN')")
-                .antMatchers("/member/**").access("hasRole('ADMIN','MEMBER')")
+                .antMatchers("/challenge/admin/**").hasRole("ADMIN")
+                .antMatchers("/member/**").access("hasAnyRole('ADMIN','MEMBER')")
                 .anyRequest().permitAll()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(customEntryPoint).accessDeniedHandler(customAccessDeniedHandler)
                 .and()
                 .httpBasic().disable()
                 .formLogin().disable()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, cookieUtil), UsernamePasswordAuthenticationFilter.class);
                 //.addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
     }
 

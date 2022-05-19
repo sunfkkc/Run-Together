@@ -15,8 +15,6 @@ public class BoardDto {
 
     private String contents;
 
-    private Date registerDate;
-
     private int views;
 
     private String ImageFileName;

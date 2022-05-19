@@ -31,14 +31,14 @@ public class Member implements UserDetails {
         this.pwd = memberDto.getPwd();
         this.name = memberDto.getName();
         this.gender = memberDto.getGender();
-        this.role = Role.MEMBER;
+        this.role = Role.ROLE_MEMBER;
 
     }
 
     //Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        ArrayList<GrantedAuthority> auth = new ArrayList<>(); //List인 이유 : 여러개의 권한을 가질 수 있다
+        Collection<GrantedAuthority> auth = new ArrayList<>(); //List인 이유 : 여러개의 권한을 가질 수 있다
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
         auth.add(authority);
         return auth;

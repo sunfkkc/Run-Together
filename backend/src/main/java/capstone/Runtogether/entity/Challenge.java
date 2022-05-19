@@ -1,5 +1,7 @@
 package capstone.Runtogether.entity;
 
+import capstone.Runtogether.dto.BoardDto;
+import capstone.Runtogether.dto.ChallengeDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,4 +32,13 @@ public class Challenge {
     private String ImageFileName;
 
     private String state;
+
+    public Challenge(ChallengeDto challengeDto) {
+        this.title = challengeDto.getTitle();
+        this.contents = challengeDto.getContents();
+        this.registerDate = new Date();
+        this.views = challengeDto.getViews();
+        this.ImageFileName = challengeDto.getImageFileName();
+        this.state = challengeDto.getState();
+    }
 }

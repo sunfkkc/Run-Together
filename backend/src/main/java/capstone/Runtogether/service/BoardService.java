@@ -32,16 +32,17 @@ public class BoardService {
         this.boardRepository = boardRepository;
     }
 
+    //목록 조회
+    public List<Board> list() {
+        return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "boardId"));
+    }
+
     //글 작성
     public Optional<Board> write(BoardDto boardDto) {
         Board board = new Board(boardDto);
         return Optional.ofNullable(boardRepository.save(board));
     }
 
-    //목록 조회
-    public List<Board> list() {
-        return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "boardId"));
-    }
 
     //게시글 읽기
     public Board getArticle(Long boardId){
@@ -62,7 +63,7 @@ public class BoardService {
         //UUID 설정
         String fileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
-        String saveFileName = "src/main/resources/static/img/" + File.separator + uuid + "_" + fileName;
+        String saveFileName = "src/main/resources/static/img/board/" + File.separator + uuid + "_" + fileName;
         Path savePath = Path.of(saveFileName);
 
         try {

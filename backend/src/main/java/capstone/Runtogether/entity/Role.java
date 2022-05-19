@@ -1,6 +1,6 @@
 package capstone.Runtogether.entity;
 
 public enum Role {
-    ADMIN,
-    MEMBER
+    ROLE_ADMIN,
+    ROLE_MEMBER;
 }
