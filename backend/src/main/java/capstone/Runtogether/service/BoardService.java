@@ -61,8 +61,9 @@ public class BoardService {
         //UUID 설정
         String fileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
-        String saveFileName = "src/main/resources/static/img/board/" + File.separator + uuid + "_" + fileName;
-        Path savePath = Path.of(saveFileName);
+        String saveFileName = File.separator + uuid + "_" + fileName;
+        //컴퓨터에 따라 수정
+        Path savePath = Path.of("src/main/resources/static/img/board/" + saveFileName);
 
         try {
             //파일저장

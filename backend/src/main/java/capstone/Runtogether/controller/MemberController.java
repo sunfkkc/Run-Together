@@ -80,7 +80,8 @@ public class MemberController extends ApiBaseController {
         Cookie auth = cookieUtil.getCookie(request, "auth");
         String accessToken = auth.getValue();
         String email = jwtTokenProvider.getEmailFromJwt(accessToken);
-        return new ResponseEntity<>(email, HttpStatus.OK);
+        Member member = userDetailService.loadUserByUsername(email);
+        return new ResponseEntity<>(member.getName(), HttpStatus.OK);
 
     }
 

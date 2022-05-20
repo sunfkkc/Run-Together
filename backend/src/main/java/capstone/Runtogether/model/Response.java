@@ -1,5 +1,6 @@
 package capstone.Runtogether.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,20 +9,35 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class Response<T> {
 
     private int status;
     private String message;
     private T data;
+    @JsonIgnore
+    private T img;
 
     public Response(final int status, final String message) {
         this.status = status;
         this.message = message;
         this.data = null;
+        this.img = null;
     }
 
-    public static <T> Response<T> res(final int status, final String message) {
+    public Response(final int status, final String message,final T t) {
+        this.status = status;
+        this.message = message;
+        this.data = t;
+        this.img = null;
+    }
+    public Response(final int status, final String message,final T t,final T i) {
+        this.status = status;
+        this.message = message;
+        this.data = t;
+        this.img = i;
+    }
+
+/*    public static <T> Response<T> res(final int status, final String message) {
         return res(status, message, null);
     }
 
@@ -31,5 +47,5 @@ public class Response<T> {
                 .status(status)
                 .message(message)
                 .build();
-    }
+    }*/
 }

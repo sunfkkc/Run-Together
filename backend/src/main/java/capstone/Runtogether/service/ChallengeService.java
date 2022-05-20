@@ -59,8 +59,8 @@ public class ChallengeService {
         //UUID 설정
         String fileName = multipartFile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
-        String saveFileName = "src/main/resources/static/img/challenge/"+ File.separator + uuid + "_" + fileName;
-        Path savePath = Path.of(saveFileName);
+        String saveFileName = File.separator + uuid + "_" + fileName;
+        Path savePath = Path.of("src/main/resources/static/img/challenge/"+ saveFileName);
 
         try {
             //파일저장
