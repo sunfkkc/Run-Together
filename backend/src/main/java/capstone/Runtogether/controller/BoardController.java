@@ -39,7 +39,7 @@ public class BoardController {
     @GetMapping("/list")
     public ResponseEntity<Response<Object>> list() {
         List<Board> boardList = boardService.list();
-        return new ResponseEntity<>(new Response<>(StatusCode.OK,"게시물 조회 성공",boardList),HttpStatus.OK);
+        return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시물 조회 성공", boardList), HttpStatus.OK);
     }
 
     //게시글 작성
@@ -61,27 +61,27 @@ public class BoardController {
 
     //이미지 불러오기
     @GetMapping("/image")
-    public ResponseEntity<Resource> readImage(@RequestBody ImageForm image ) {
+    public ResponseEntity<Resource> readImage(@RequestBody ImageForm image) {
         //컴퓨터에 따라 수정
         String path = "D:\\yeonjin\\study\\Run-Together\\backend\\src\\main\\resources\\static\\img\\board";
         String fileName = image.getName();
         Resource resource = new FileSystemResource(path + fileName);
 
         //파일 존재x
-        if(!resource.exists()){
+        if (!resource.exists()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         HttpHeaders headers = new HttpHeaders();
 
         try {
-            Path filePath = Paths.get(path+fileName);
+            Path filePath = Paths.get(path + fileName);
             headers.add("Content-Type", Files.probeContentType(filePath));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ResponseEntity<>(resource,headers,HttpStatus.OK);
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     @PostMapping("/admin/approve/{boardId}")
@@ -90,11 +90,20 @@ public class BoardController {
         if (challengeId != null) {
             return new ResponseEntity<>(new Response<>(StatusCode.CREATED, "승인 완료"), HttpStatus.CREATED);
 
-        }else {
+        } else {
             return new ResponseEntity<>(new Response<>(StatusCode.INTERNAL_SERVER_ERROR, "승인 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
 
     }
+
+    //게시글 삭제
+    @DeleteMapping("admin/delete/{boardId}")
+    public ResponseEntity<Response<Object>> boardDelete(@PathVariable long boardId) {
+        boardService.delete(boardId);
+        return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시글 삭제"), HttpStatus.OK);
+
+    }
+
 
 }

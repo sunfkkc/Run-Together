@@ -91,4 +91,12 @@ public class ChallengeController {
         return new ResponseEntity<>(resource,headers,HttpStatus.OK);
     }
 
+    //게시글 삭제
+    @DeleteMapping("admin/delete/{challengeId}")
+    public ResponseEntity<Response<Object>> boardDelete(@PathVariable long challengeId) {
+        challengeService.delete(challengeId);
+        return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시글 삭제"), HttpStatus.OK);
+
+    }
+
 }

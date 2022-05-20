@@ -72,6 +72,11 @@ public class ChallengeService {
 
     }
 
+    //게시글 삭제
+    public void delete (Long challengeId){
+        challengeRepository.deleteById(challengeId);
+    }
+
 
 
 

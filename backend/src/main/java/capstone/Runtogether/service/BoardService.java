@@ -91,5 +91,10 @@ public class BoardService {
         return null;
     }
 
+    //게시글 삭제
+    public void delete (Long boardId){
+        boardRepository.deleteById(boardId);
+    }
+
 
 }
