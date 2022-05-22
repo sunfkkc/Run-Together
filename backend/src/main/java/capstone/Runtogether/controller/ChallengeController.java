@@ -94,6 +94,8 @@ public class ChallengeController {
     //게시글 삭제
     @DeleteMapping("admin/delete/{challengeId}")
     public ResponseEntity<Response<Object>> boardDelete(@PathVariable long challengeId) {
+        Challenge targetChallenge = challengeService.getArticle(challengeId);
+        challengeService.deleteImage(targetChallenge.getImageFileName());
         challengeService.delete(challengeId);
         return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시글 삭제"), HttpStatus.OK);
 

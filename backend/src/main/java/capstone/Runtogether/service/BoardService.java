@@ -92,9 +92,19 @@ public class BoardService {
     }
 
     //게시글 삭제
-    public void delete (Long boardId){
+    public void delete(Long boardId) {
         boardRepository.deleteById(boardId);
     }
 
+    //서버 이미지 삭제
+    public void deleteImage(String fileName) {
+        String path = "D:\\yeonjin\\study\\Run-Together\\backend\\src\\main\\resources\\static\\img\\board";
+
+        File targetFile = new File(path + fileName);
+
+        if(targetFile.exists()){
+            boolean delete = targetFile.delete();
+        }
+    }
 
 }

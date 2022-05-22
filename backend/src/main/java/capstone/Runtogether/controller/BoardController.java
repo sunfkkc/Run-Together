@@ -100,6 +100,8 @@ public class BoardController {
     //게시글 삭제
     @DeleteMapping("admin/delete/{boardId}")
     public ResponseEntity<Response<Object>> boardDelete(@PathVariable long boardId) {
+        Board targetBoard = boardService.getArticle(boardId);
+        boardService.deleteImage(targetBoard.getImageFileName());
         boardService.delete(boardId);
         return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시글 삭제"), HttpStatus.OK);
 
