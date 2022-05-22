@@ -79,7 +79,7 @@ public class ChallengeService {
 
     //서버 이미지 삭제
     public void deleteImage(String fileName) {
-        String path = "D:\\yeonjin\\study\\Run-Together\\backend\\src\\main\\resources\\static\\img\\board";
+        String path = "D:\\yeonjin\\study\\Run-Together\\backend\\src\\main\\resources\\static\\img\\challenge";
 
         File targetFile = new File(path + fileName);
 
