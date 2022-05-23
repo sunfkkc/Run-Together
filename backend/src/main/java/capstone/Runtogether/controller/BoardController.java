@@ -7,6 +7,7 @@ import capstone.Runtogether.model.Response;
 import capstone.Runtogether.model.ResponseMessage;
 import capstone.Runtogether.model.StatusCode;
 import capstone.Runtogether.service.BoardService;
+import capstone.Runtogether.service.ChallengeService;
 import capstone.Runtogether.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ import java.util.List;
 public class BoardController {
     private final JwtTokenProvider jwtTokenProvider;
     private final BoardService boardService;
+    private final ChallengeService challengeService;
 
     //게시글 조회
     @GetMapping("/list")
@@ -85,9 +87,13 @@ public class BoardController {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
+    //게시글 승인
     @PostMapping("/admin/approve/{boardId}")
     public ResponseEntity<Response<Object>> approve(@PathVariable long boardId, @RequestParam("state") String state) {
-        Long challengeId = boardService.moveToChallenge(boardId, state);
+        String imageName = boardService.moveToChallengeImage(boardId);
+        Long challengeId = boardService.moveToChallengeDB(boardId, state,imageName);
+
+
         if (challengeId != null) {
             return new ResponseEntity<>(new Response<>(StatusCode.CREATED, "승인 완료"), HttpStatus.CREATED);
 
@@ -101,8 +107,7 @@ public class BoardController {
     //게시글 삭제
     @DeleteMapping("admin/delete/{boardId}")
     public ResponseEntity<Response<Object>> boardDelete(@PathVariable long boardId) {
-        Board targetBoard = boardService.getArticle(boardId);
-        boardService.deleteImage(targetBoard.getImageFileName());
+        boardService.deleteImage(boardId);
         boardService.delete(boardId);
         return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시글 삭제"), HttpStatus.OK);
 
