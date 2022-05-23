@@ -67,11 +67,12 @@ public class ChallengeController {
     }
 
     //이미지 불러오기
-    @GetMapping("/image")
-    public ResponseEntity<Resource> readImage(@RequestBody ImageForm image ) {
+    @GetMapping("/image/{challengeId}")
+    public ResponseEntity<Resource> readImage(@PathVariable long challengeId) {
+        Challenge article = challengeService.getArticle(challengeId);
+        String fileName = article.getImageFileName();
         //컴퓨터에 따라 수정
         String path = "D:\\yeonjin\\study\\Run-Together\\backend\\src\\main\\resources\\static\\img\\challenge";
-        String fileName = image.getName();
         Resource resource = new FileSystemResource(path + fileName);
 
         //파일 존재x
