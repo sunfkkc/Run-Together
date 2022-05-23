@@ -45,18 +45,11 @@ public class ChallengeController {
 
     //게시글 작성
     @PostMapping("/admin/write")
-    public ResponseEntity<Response<Object>> write(@RequestPart("challengeDto") ChallengeDto challengeDto, @RequestPart(value = "file",required = false) MultipartFile file, HttpServletRequest request) {
+    public ResponseEntity<Response<Object>> write(@RequestPart("challengeDto") ChallengeDto challengeDto, @RequestPart(value = "file",required = false) MultipartFile file) {
 
         challengeDto.setImageFileName(challengeService.saveImageInServer(file));
         challengeService.write(challengeDto);
         return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시물 추가 성공"), HttpStatus.OK);
-        /*if (jwtTokenProvider.validateToken(accessToken)) {
-            challengeDto.setImageFileName(challengeService.saveImageInServer(file));
-            challengeService.write(challengeDto);
-            return new ResponseEntity<>(new Response<>(StatusCode.OK, "게시물 추가 성공"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new Response<>(StatusCode.FORBIDDEN, ResponseMessage.UNAUTHORIZED), HttpStatus.FORBIDDEN);
-        }*/
     }
 
     @GetMapping("/{challengeId}")

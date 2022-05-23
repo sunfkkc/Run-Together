@@ -24,8 +24,8 @@ public class Running implements Serializable {
     @Column(name = "member_id")
     private Long memberId;
 
-    @Column(name = "polyline", columnDefinition = "LONGTEXT")
-    private String polyline;
+   /* @Column(name = "polyline", columnDefinition = "LONGTEXT")
+    private String polyline;*/
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -33,14 +33,16 @@ public class Running implements Serializable {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column(name = "accumulated_distance", nullable = false)
-    private double accDistance;
+    @Column(name = "distance", nullable = false)
+    private double distance;
 
-    @Column(name = "accumulated_time", nullable = false)
-    private Long accTime;
+    @Column(name = "time", nullable = false)
+    private int time;
 
-    @Column(name = "thumbnail", length = 300)
-    private String thumbnail;
+    private int speed;
+
+ /*   @Column(name = "thumbnail", length = 300)
+    private String thumbnail;*/
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -18,7 +18,7 @@ public class RecordTempRepository {
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, Record> hashOps;
 
-
+/*
     public List<Record> findRecordByMemberId(Long memberId){
         //데이터를 Map 자료형으로 가져옴
         Map<String, Record> map =hashOps.entries(String.valueOf(memberId));
@@ -36,6 +36,6 @@ public class RecordTempRepository {
         });
 
         return records;
-    }
+    }*/
 
 }

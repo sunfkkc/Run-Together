@@ -14,28 +14,20 @@ public class Response<T> {
     private int status;
     private String message;
     private T data;
-    @JsonIgnore
-    private T img;
+
 
     public Response(final int status, final String message) {
         this.status = status;
         this.message = message;
         this.data = null;
-        this.img = null;
     }
 
     public Response(final int status, final String message,final T t) {
         this.status = status;
         this.message = message;
         this.data = t;
-        this.img = null;
     }
-    public Response(final int status, final String message,final T t,final T i) {
-        this.status = status;
-        this.message = message;
-        this.data = t;
-        this.img = i;
-    }
+
 
 /*    public static <T> Response<T> res(final int status, final String message) {
         return res(status, message, null);

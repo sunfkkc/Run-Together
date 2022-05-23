@@ -1,5 +1,6 @@
 package capstone.Runtogether.controller;
 
+import capstone.Runtogether.dto.RunningDto;
 import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.entity.Record;
 import capstone.Runtogether.entity.Running;
@@ -9,6 +10,9 @@ import capstone.Runtogether.model.StatusCode;
 import capstone.Runtogether.repository.RecordTempRepository;
 import capstone.Runtogether.service.MemberService;
 import capstone.Runtogether.service.RecordService;
+import capstone.Runtogether.service.RunningService;
+import capstone.Runtogether.service.UserDetailServiceImpl;
+import capstone.Runtogether.util.CookieUtil;
 import capstone.Runtogether.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +36,30 @@ public class RunningController {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final RecordTempRepository recordTempRepository;
+    private final RunningService runningService;
+    private final CookieUtil cookieUtil;
+    private final UserDetailServiceImpl userDetailService;
 
-    @GetMapping("/{memberId}")
+
+    @PostMapping("/complete")
+    public ResponseEntity<Response<Object>> saveRunning(@RequestBody RunningDto runningDto, HttpServletRequest request) {
+        //요청한 사용자 확인
+        Cookie auth = cookieUtil.getCookie(request, "auth");
+        String accessToken = auth.getValue();
+        String email = jwtTokenProvider.getEmailFromJwt(accessToken);
+        Member member = userDetailService.loadUserByUsername(email);
+
+        //러닝 데이터 저장 요청
+        Long memberId = runningService.completeRunning(runningDto, member.getMemberId());
+
+        if (memberId.equals(member.getMemberId())) {
+            return new ResponseEntity<>(new Response<>(StatusCode.CREATED,"러닝데이터 저장 완료"), HttpStatus.CREATED);
+        }else{
+            return new ResponseEntity<>(new Response<>(StatusCode.INTERNAL_SERVER_ERROR, "데이터 저장 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /*@GetMapping("/{memberId}")
     public ResponseEntity<Response<Object>> getRunningRecord(@PathVariable long memberId) {
         List<Running> memberRunningRecords = recordService.findRunningByMemberId(memberId);
         return new ResponseEntity<>(new
@@ -60,6 +87,6 @@ public class RunningController {
 
         }
         return null;
-    }
+    }*/
 
 }

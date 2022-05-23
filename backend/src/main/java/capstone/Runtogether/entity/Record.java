@@ -30,11 +30,8 @@ public class Record implements Serializable {
     @JoinColumn(name = "member_id", nullable = true)
     private Member memberId;
 
-    @Column(name = "accumulated_distance", nullable = false)
-    private double accDistance;
-
-    @Column(name = "accumulated_time", nullable = false)
-    private Long accTime;
+    @Column(name = "distance", nullable = false)
+    private double distance;
 
     private double speed;
 }
