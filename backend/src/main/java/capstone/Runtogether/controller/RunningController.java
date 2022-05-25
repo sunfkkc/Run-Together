@@ -1,5 +1,6 @@
 package capstone.Runtogether.controller;
 
+import capstone.Runtogether.dto.RecordForm;
 import capstone.Runtogether.dto.RunningDto;
 import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.entity.Record;
@@ -18,13 +19,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -50,15 +49,24 @@ public class RunningController {
         Member member = userDetailService.loadUserByUsername(email);
 
         //러닝 데이터 저장 요청
-        Long memberId = runningService.completeRunning(runningDto, member.getMemberId());
+        Running completeRunning = runningService.completeRunning(runningDto, member.getMemberId());
 
-        if (memberId.equals(member.getMemberId())) {
-            return new ResponseEntity<>(new Response<>(StatusCode.CREATED,"러닝데이터 저장 완료"), HttpStatus.CREATED);
-        }else{
+        if (completeRunning.getMemberId().equals(member.getMemberId())) {
+            return new ResponseEntity<>(new Response<>(StatusCode.CREATED, "러닝데이터 저장 완료", completeRunning.getRunningId()), HttpStatus.CREATED);
+        } else {
             return new ResponseEntity<>(new Response<>(StatusCode.INTERNAL_SERVER_ERROR, "데이터 저장 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @PostMapping("/record/{runningId}")
+    public ResponseEntity<Response<Object>> saveRecord(@RequestBody RecordForm form, @PathVariable Long runningId) {
+        Long saveRecord = recordService.saveRecord(form, runningId);
+        if (saveRecord!=null) {
+            return new ResponseEntity<>(new Response<>(StatusCode.CREATED, "러닝데이터 저장 완료"), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(new Response<>(StatusCode.INTERNAL_SERVER_ERROR, "데이터 저장 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     /*@GetMapping("/{memberId}")
     public ResponseEntity<Response<Object>> getRunningRecord(@PathVariable long memberId) {
         List<Running> memberRunningRecords = recordService.findRunningByMemberId(memberId);

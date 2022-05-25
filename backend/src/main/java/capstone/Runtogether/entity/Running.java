@@ -1,12 +1,10 @@
 package capstone.Runtogether.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -40,14 +38,6 @@ public class Running implements Serializable {
     private int time;
 
     private int speed;
-
- /*   @Column(name = "thumbnail", length = 300)
-    private String thumbnail;*/
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "record_id")
-    private List<Record> record;
 
 
 }

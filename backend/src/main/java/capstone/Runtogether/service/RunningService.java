@@ -20,7 +20,7 @@ public class RunningService {
         this.runningRepository = runningRepository;
     }
 
-    public Long completeRunning(RunningDto runningDto, Long memberId) {
+    public Running completeRunning(RunningDto runningDto, Long memberId) {
         try{
             Running running = Running.builder()
                     .memberId(memberId)
@@ -29,8 +29,7 @@ public class RunningService {
                     .speed(runningDto.getSpeed())
                     .build();
 
-            runningRepository.save(running);
-            return memberId;
+            return runningRepository.save(running);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

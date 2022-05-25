@@ -20,15 +20,7 @@ public class Record implements Serializable {
     @Column(name = "record_id")
     private Long recordId;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "running_id")
-    private Running runningId;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = true)
-    private Member memberId;
+    private Long runningId;
 
     @Column(name = "distance", nullable = false)
     private double distance;
