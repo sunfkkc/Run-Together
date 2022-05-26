@@ -1,5 +1,6 @@
 package capstone.Runtogether.service;
 
+import capstone.Runtogether.dto.MemberVo;
 import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.dto.MemberDto;
 import capstone.Runtogether.entity.Role;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +79,26 @@ public class MemberService {
     private boolean existEmail(MemberDto member) {
         return memberRepository.findByEmail(member.getEmail())
                 .isPresent();
+    }
+
+    public Member getMember(String memberName) {
+        if (memberRepository.findByName(memberName).isPresent()) {
+            return memberRepository.findByName(memberName).get();
+        }
+        return null;
+    }
+
+    public List<MemberVo> findIdName() {
+        List<Member> memberAll = memberRepository.findAll();
+        List<MemberVo> memberVoList = new ArrayList<>();
+        for (Member member : memberAll) {
+            MemberVo memberVo = MemberVo.builder()
+                    .memberId(member.getMemberId())
+                    .name(member.getName())
+                    .build();
+            memberVoList.add(memberVo);
+        }
+        return memberVoList;
     }
 
     public Optional<Member> findOne(String memberEmail) {

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -20,8 +21,9 @@ public class RunningService {
         this.runningRepository = runningRepository;
     }
 
+    //러닝 데이터 저장
     public Running completeRunning(RunningDto runningDto, Long memberId) {
-        try{
+        try {
             Running running = Running.builder()
                     .memberId(memberId)
                     .distance(runningDto.getDistance())
@@ -34,5 +36,11 @@ public class RunningService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    //러닝 기록 조회
+    public List<Running> findAllRunning(Long memberId) {
+        return runningRepository.findAllByMemberIdOrderByStartTimeDesc(memberId);
+
     }
 }

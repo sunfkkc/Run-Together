@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @RestController
@@ -40,6 +41,7 @@ public class RunningController {
     private final UserDetailServiceImpl userDetailService;
 
 
+    //러닝 데이터 저장
     @PostMapping("/complete")
     public ResponseEntity<Response<Object>> saveRunning(@RequestBody RunningDto runningDto, HttpServletRequest request) {
         //요청한 사용자 확인
@@ -67,13 +69,23 @@ public class RunningController {
             return new ResponseEntity<>(new Response<>(StatusCode.INTERNAL_SERVER_ERROR, "데이터 저장 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    /*@GetMapping("/{memberId}")
-    public ResponseEntity<Response<Object>> getRunningRecord(@PathVariable long memberId) {
-        List<Running> memberRunningRecords = recordService.findRunningByMemberId(memberId);
-        return new ResponseEntity<>(new
-                Response<>(StatusCode.OK, ResponseMessage.RUNNING_LIST_SUCCESS, memberRunningRecords), HttpStatus.OK);
-    }
 
+    //멤버의 기록 조회
+    @GetMapping("")
+    public ResponseEntity<Response<Object>> getRunning(@RequestParam("memberName") String memberName) {
+        try {
+            Member findMember = memberService.getMember(memberName);
+
+            List<Running> allRunning = runningService.findAllRunning(findMember.getMemberId());
+
+            return new ResponseEntity<>(new
+                    Response<>(StatusCode.OK, ResponseMessage.RUNNING_LIST_SUCCESS, allRunning), HttpStatus.OK);
+        } catch (NullPointerException e) {
+            log.error("memberName is not present");
+        }
+        return null;
+    }
+/*
     @GetMapping("/temp")
     public ResponseEntity<Response<Object>> getTempRecord(@CookieValue("auth") String accessToken) {
         if (jwtTokenProvider.validateToken(accessToken)) {

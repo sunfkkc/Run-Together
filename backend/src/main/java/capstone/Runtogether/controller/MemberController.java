@@ -1,5 +1,6 @@
 package capstone.Runtogether.controller;
 
+import capstone.Runtogether.dto.MemberVo;
 import capstone.Runtogether.entity.Member;
 import capstone.Runtogether.dto.LoginFormDto;
 import capstone.Runtogether.dto.MemberDto;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -58,7 +60,7 @@ public class MemberController extends ApiBaseController {
         //토큰 발급
         String accessToken = jwtTokenProvider.generateAccessToken(loginMember);
         //쿠키에 토큰 넣기
-        Cookie tokenCookie = cookieUtil.createCookie("auth",accessToken);
+        Cookie tokenCookie = cookieUtil.createCookie("auth", accessToken);
 
         response.addCookie(tokenCookie);
 
@@ -87,28 +89,19 @@ public class MemberController extends ApiBaseController {
 
     @PostMapping("logout")
     public ResponseEntity<Response<Object>> logout(HttpServletRequest request) {
-        Cookie logoutToken = cookieUtil.getCookie(request,"auth");
+        Cookie logoutToken = cookieUtil.getCookie(request, "auth");
         redisTemplate.opsForValue()
                 .set(logoutToken.getValue(), "access-token",
-                        60*60, TimeUnit.SECONDS);
+                        60 * 60, TimeUnit.SECONDS);
 
-        return new ResponseEntity<>(new Response<>(StatusCode.OK,"로그아웃 완료"),HttpStatus.OK);
+        return new ResponseEntity<>(new Response<>(StatusCode.OK, "로그아웃 완료"), HttpStatus.OK);
     }
 
-       /* @PostMapping("reissue")
-    public ResponseEntity<?> reissue(@RequestBody ReissueDto reissue, HttpServletResponse response){
-        if(!jwtTokenProvider.validateToken(reissue.getRefreshToken())){
-            return new ResponseEntity<String>("Refresh Token 정보가 유효하지 않습니다.", HttpStatus.OK);
-        }
-        Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
+    //모든 멤버 조회
+    @GetMapping("/member")
+    public ResponseEntity<Response<Object>> retrieve() {
+        List<MemberVo> memberAll = memberService.findIdName();
+        return new ResponseEntity<>(new Response<>(StatusCode.OK, "회원 조회 완료",memberAll), HttpStatus.OK);
 
-        String refreshToken = (String) redisTemplate.opsForValue().get("RT:"+authentication.getName());
-        if(!refreshToken.equals(reissue.getRefreshToken())){
-            return new ResponseEntity<String>("Refresh Token 정보가 일치하지 않습니다.", HttpStatus.OK);
-        }
-
-        String newAccessToken = jwtTokenProvider.generateAccessToken((Member) authentication);
-
-        return new ResponseEntity<String>(newAccessToken, HttpStatus.OK);
-    }*/
+    }
 }
