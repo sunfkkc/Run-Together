@@ -24,11 +24,14 @@ public class RunningService {
     //러닝 데이터 저장
     public Running completeRunning(RunningDto runningDto, Long memberId) {
         try {
+            LocalDateTime now = LocalDateTime.now();
             Running running = Running.builder()
                     .memberId(memberId)
                     .distance(runningDto.getDistance())
                     .time(runningDto.getTime())
                     .speed(runningDto.getSpeed())
+                    .startTime(now.minusMinutes(runningDto.getTime()))
+                    .endTime(now)
                     .build();
 
             return runningRepository.save(running);
