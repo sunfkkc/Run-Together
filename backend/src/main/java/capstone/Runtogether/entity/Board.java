@@ -4,6 +4,7 @@ import capstone.Runtogether.dto.BoardDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -23,7 +24,7 @@ public class Board {
     private String contents;
 
     @Column(name = "register_date")
-    private Date registerDate;
+    private LocalDateTime registerDate;
 
     private int views;
 
@@ -33,7 +34,7 @@ public class Board {
     public Board(BoardDto boardDto) {
         this.title = boardDto.getTitle();
         this.contents = boardDto.getContents();
-        this.registerDate = new Date();
+        this.registerDate = LocalDateTime.now();
         this.views = 0;
         this.ImageFileName = boardDto.getImageFileName();
     }

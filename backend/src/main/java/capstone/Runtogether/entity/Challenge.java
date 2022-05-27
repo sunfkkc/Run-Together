@@ -5,6 +5,7 @@ import capstone.Runtogether.dto.ChallengeDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -24,7 +25,7 @@ public class Challenge {
     private String contents;
 
     @Column(name = "register_date")
-    private Date registerDate;
+    private LocalDateTime registerDate;
 
     private int views;
 
@@ -36,7 +37,7 @@ public class Challenge {
     public Challenge(ChallengeDto challengeDto) {
         this.title = challengeDto.getTitle();
         this.contents = challengeDto.getContents();
-        this.registerDate = new Date();
+        this.registerDate = LocalDateTime.now();
         this.views = 0;
         this.ImageFileName = challengeDto.getImageFileName();
         this.state = challengeDto.getState();
@@ -45,7 +46,7 @@ public class Challenge {
     public Challenge(Board board) {
         this.title = board.getTitle();
         this.contents = board.getContents();
-        this.registerDate = new Date();
+        this.registerDate = LocalDateTime.now();
         this.views = 0;
         this.ImageFileName = board.getImageFileName();
         this.state = null;
