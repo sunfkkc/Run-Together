@@ -30,7 +30,7 @@ public class RunningService {
                     .distance(runningDto.getDistance())
                     .time(runningDto.getTime())
                     .speed(runningDto.getSpeed())
-                    .startTime(now.minusMinutes(runningDto.getTime()))
+                    .startTime(now.minusSeconds(runningDto.getTime()))
                     .endTime(now)
                     .build();
 
