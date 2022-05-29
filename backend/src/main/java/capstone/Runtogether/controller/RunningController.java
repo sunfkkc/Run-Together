@@ -3,6 +3,7 @@ package capstone.Runtogether.controller;
 import capstone.Runtogether.dto.RecordForm;
 import capstone.Runtogether.dto.RunningDto;
 import capstone.Runtogether.entity.Member;
+import capstone.Runtogether.entity.Record;
 import capstone.Runtogether.entity.Running;
 import capstone.Runtogether.model.Response;
 import capstone.Runtogether.model.ResponseMessage;
@@ -63,14 +64,14 @@ public class RunningController {
     @PostMapping("/record/{runningId}")
     public ResponseEntity<Response<Object>> saveRecord(@RequestBody RecordForm form, @PathVariable Long runningId) {
         Long saveRecord = recordService.saveRecord(form, runningId);
-        if (saveRecord!=null) {
+        if (saveRecord != null) {
             return new ResponseEntity<>(new Response<>(StatusCode.CREATED, "러닝데이터 저장 완료"), HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(new Response<>(StatusCode.INTERNAL_SERVER_ERROR, "데이터 저장 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    //멤버의 기록 조회
+    //멤버의 러닝 조회
     @GetMapping("")
     public ResponseEntity<Response<Object>> getRunning(@RequestParam("memberName") String memberName) {
         try {
@@ -85,28 +86,20 @@ public class RunningController {
         }
         return null;
     }
-/*
-    @GetMapping("/temp")
-    public ResponseEntity<Response<Object>> getTempRecord(@CookieValue("auth") String accessToken) {
-        if (jwtTokenProvider.validateToken(accessToken)) {
-            Member loginMember = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            List<Record> records = recordTempRepository.findRecordByMemberId(loginMember.getMemberId());
-            return new ResponseEntity<>(new Response<>(StatusCode.OK, ResponseMessage.RECORD_REDIS_LIST_SUCCESS, records), HttpStatus.OK);
+    //레코드 조회
+    @GetMapping("/record")
+    public ResponseEntity<Response<Object>> getRecord(@RequestParam("Id") Long runningId) {
+        try {
 
-        }else {
-            return new ResponseEntity<>(new Response<>(StatusCode.FORBIDDEN,ResponseMessage.UNAUTHORIZED),HttpStatus.FORBIDDEN);
-        }
-    }
+            List<Record> allRecord = recordService.findAllRecord(runningId);
 
-    @PostMapping
-    public ResponseEntity<Response<Object>> saveRecord(@RequestBody Map<String, Object> runningInfo, @CookieValue("auth") String accessToken){
-        if(jwtTokenProvider.validateToken(accessToken)){
-            Member loginMember = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-
+            return new ResponseEntity<>(new
+                    Response<>(StatusCode.OK, ResponseMessage.RUNNING_LIST_SUCCESS, allRecord), HttpStatus.OK);
+        } catch (NullPointerException e) {
+            log.error("memberName is not present");
         }
         return null;
-    }*/
+    }
 
 }

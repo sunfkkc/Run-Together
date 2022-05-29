@@ -47,11 +47,11 @@ public class RecordService {
         }
     }
 
-    public Running findRunning(Long runningId) {
-        if (runningRepository.findByRunningId(runningId).isPresent()) {
-            return runningRepository.findByRunningId(runningId).get();
-        }
-        return null;
+
+    //러닝 기록 조회
+    public List<Record> findAllRecord(Long runningId) {
+        return recordRepository.findAllByRunningId(runningId);
+
     }
 
 }

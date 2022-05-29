@@ -47,4 +47,11 @@ public class RunningService {
         return runningRepository.findAllByMemberIdOrderByStartTimeDesc(memberId);
 
     }
+
+    public Running findRunning(Long runningId) {
+        if (runningRepository.findByRunningId(runningId).isPresent()) {
+            return runningRepository.findByRunningId(runningId).get();
+        }
+        return null;
+    }
 }
