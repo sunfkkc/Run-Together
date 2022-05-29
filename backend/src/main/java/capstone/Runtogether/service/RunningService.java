@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -32,6 +31,7 @@ public class RunningService {
                     .speed(runningDto.getSpeed())
                     .startTime(now.minusSeconds(runningDto.getTime()))
                     .endTime(now)
+                    .polyline(runningDto.getPolyline())
                     .build();
 
             return runningRepository.save(running);
@@ -40,6 +40,7 @@ public class RunningService {
             return null;
         }
     }
+
 
     //러닝 기록 조회
     public List<Running> findAllRunning(Long memberId) {

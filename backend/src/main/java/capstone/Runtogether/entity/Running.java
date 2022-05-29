@@ -3,8 +3,12 @@ package capstone.Runtogether.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.xml.stream.Location;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -39,5 +43,5 @@ public class Running implements Serializable {
 
     private int speed;
 
-
+    private String polyline;
 }

@@ -3,7 +3,6 @@ package capstone.Runtogether.controller;
 import capstone.Runtogether.dto.RecordForm;
 import capstone.Runtogether.dto.RunningDto;
 import capstone.Runtogether.entity.Member;
-import capstone.Runtogether.entity.Record;
 import capstone.Runtogether.entity.Running;
 import capstone.Runtogether.model.Response;
 import capstone.Runtogether.model.ResponseMessage;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController

@@ -16,5 +16,7 @@ public class RunningDto {
 
     private int speed;
 
+    private String polyline;
+
 
 }
