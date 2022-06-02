@@ -80,12 +80,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
 
-        cors.setAllowedOrigins(Arrays.asList("http://localhost:3001", "http://localhost:3000"));
+        cors.setAllowedOrigins(Arrays.asList("http://localhost:3001", "http://localhost:3000","http://192.168.0.170:3000","https://192.168.0.170:3000"));
         cors.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
         cors.setAllowedHeaders(List.of("*"));
         cors.setAllowCredentials(true); // 자격증명과 함께 요청 여부 (Authorization로 사용자 인증 사용 시 true)
         //configuration.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
         return source;

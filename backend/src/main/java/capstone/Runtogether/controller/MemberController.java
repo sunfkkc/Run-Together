@@ -35,6 +35,7 @@ public class MemberController extends ApiBaseController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
+
     private final CookieUtil cookieUtil;
     private Object status;
 

@@ -43,5 +43,6 @@ public class Running implements Serializable {
 
     private int speed;
 
+    @Column(length = 1000)
     private String polyline;
 }
